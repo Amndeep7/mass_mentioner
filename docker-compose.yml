@@ -1,0 +1,6 @@
+version: '3.7'
+services:
+  mass_mentioner:
+    build: .
+    image: mass_mentioner:v0.1.0
+    restart: always
