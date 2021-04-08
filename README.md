@@ -1,6 +1,6 @@
 # Mass Mentioner
 
-Mention reddit users enmass without having to manually create all the comments.
+Mention reddit users enmass without having to manually create all the comments.  The mentions will be in chained comments with the first sharing the same parent comment (or post if the comment is top level) of the comment that has the flag.
 
 ## Usage server side
 
@@ -13,3 +13,46 @@ The script uses `poetry` as the dependency manager so install that, and then run
 ### Running it via Docker
 
 Instructions coming soon(tm) for both running it directly via docker and via docker-compose.
+
+## Usage user side
+
+Have the monitored user post a comment in the following format:
+
+1. Whatever text they want including newlines and whatnot.
+2. `!tags\n\n`, i.e. the text '!tags' followed by two new lines.
+3. However many properly formatted yaml documents.
+
+The yaml documents are relatively flexible.
+
+You can:
+ * provide just an array of usernames
+ * provide a message that ought to be posted with every batch of usernames along with the array of usernames
+ * add specific notes on a per user basis
+ * with multiple documents, while they will still tag in the same chain, they can have separate messages
+
+### Examples
+
+```yaml
+---
+- example
+- usernames
+- that_exceed
+- the_limit_of_3
+```
+
+```yaml
+---
+- more_than
+
+---
+- one_document
+```
+
+```yaml
+---
+message: example message
+mentions:
+  - username
+  - name: user
+    note: personalized
+```
