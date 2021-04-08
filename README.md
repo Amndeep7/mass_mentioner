@@ -12,7 +12,18 @@ The script uses `poetry` as the dependency manager so install that, and then run
 
 ### Running it via Docker
 
-Instructions coming soon(tm) for both running it directly via docker and via docker-compose.
+It's the usual Docker stuff, yall know what to do.  As a reminder:
+
+```sh
+# calling Docker directly
+docker build -t mass_mentioner:v0.1.0 .
+docker run -d --rm mass_mentioner:v0.1.0
+```
+
+```sh
+# using docker-compose
+docker-compose up -d
+```
 
 ## Usage user side
 
