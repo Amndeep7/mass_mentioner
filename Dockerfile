@@ -1,37 +1,42 @@
-FROM python:3.9.1-slim AS base
+FROM python:3.10-buster AS builder
 
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=off \
-    PIP_DISABLE_PIP_VERSION_CHECK=on \
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
     PIP_DEFAULT_TIMEOUT=100 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    POETRY_CACHE_DIR="/tmp/poetry_cache" \
     POETRY_HOME="/opt/poetry" \
-    POETRY_VIRTUALENVS_IN_PROJECT=true \
     POETRY_NO_INTERACTION=1 \
-    PYSETUP_PATH="/opt/pysetup" \
-    VENV_PATH="/opt/pysetup/.venv"
+    POETRY_VERSION="1.7.1" \
+    POETRY_VIRTUALENVS_CREATE=1 \
+    POETRY_VIRTUALENVS_IN_PROJECT=1 \
+    PATH="$PATH:$POETRY_HOME"
 
-ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
-
-FROM base AS builder
 RUN apt-get update && apt-get install --no-install-recommends -y \
     build-essential \
     curl
 
-ENV POETRY_VERSION=1.1.5
-RUN curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+RUN python3 -m venv "$POETRY_HOME"
+RUN "$POETRY_HOME"/bin/pip install poetry=="$POETRY_VERSION"
 
-WORKDIR $PYSETUP_PATH
-COPY ./poetry.lock ./pyproject.toml ./
-RUN poetry install --no-dev
+WORKDIR /app
 
-FROM base AS production
+COPY ./poetry.lock ./pyproject.toml ./README.md ./
+RUN --mount=type=cache,target="$POETRY_CACHE_DIR" "$POETRY_HOME"/bin/poetry install --no-dev --no-root
 
-COPY --from=builder $VENV_PATH $VENV_PATH
+FROM python:3.10-slim AS runtime
 
-RUN . $VENV_PATH/bin/activate
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    VIRTUAL_ENV="/app/.venv"
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-COPY ./.env /.env
-COPY ./mass_mentioner/mass_mentioner.py /mass_mentioner/mass_mentioner.py
+WORKDIR /app
 
-ENTRYPOINT ["python3", "/mass_mentioner/mass_mentioner.py"]
+COPY --from=builder "$VIRTUAL_ENV" "$VIRTUAL_ENV"
+
+COPY ./.env ./
+COPY ./mass_mentioner/ ./mass_mentioner/
+
+ENTRYPOINT ["python3", "mass_mentioner/mass_mentioner.py"]
