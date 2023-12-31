@@ -1,15 +1,15 @@
 [tool.poetry]
 name = "mass_mentioner"
-version = "0.1.0"
+version = "0.2.0"
 description = ""
 authors = ["Amndeep Singh Mann <me@asm.works>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
-python-dotenv = "^0.17.0"
-asyncpraw = "^7.2.0"
-PyYAML = "^5.4.1"
+python = "^3.10"
+python-dotenv = "^1.0.0"
+asyncpraw = "^7.7.1"
+PyYAML = "^6.0.1"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
