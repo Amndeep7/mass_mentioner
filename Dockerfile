@@ -1,4 +1,4 @@
-FROM python:3.10-buster AS builder
+FROM python:3.13-bookworm AS builder
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
@@ -23,9 +23,9 @@ RUN "$POETRY_HOME"/bin/pip install poetry=="$POETRY_VERSION"
 WORKDIR /app
 
 COPY ./poetry.lock ./pyproject.toml ./README.md ./
-RUN --mount=type=cache,target="$POETRY_CACHE_DIR" "$POETRY_HOME"/bin/poetry install --no-dev --no-root
+RUN --mount=type=cache,target="$POETRY_CACHE_DIR" "$POETRY_HOME"/bin/poetry install --only main --no-root
 
-FROM python:3.10-slim AS runtime
+FROM python:3.13-slim AS runtime
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \

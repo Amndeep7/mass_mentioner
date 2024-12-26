@@ -5,10 +5,10 @@ description = ""
 authors = ["Amndeep Singh Mann <me@asm.works>"]
 
 [tool.poetry.dependencies]
-python = "^3.10"
-python-dotenv = "^1.0.0"
-asyncpraw = "^7.7.1"
-PyYAML = "^6.0.1"
+python = "^3.13"
+python-dotenv = "^1.0.1"
+asyncpraw = "^7.8.1"
+PyYAML = "^6.0.2"
 
 [build-system]
 requires = ["poetry-core"]
