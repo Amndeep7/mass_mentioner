@@ -1,4 +1,5 @@
 from collections.abc import Mapping, Sequence
+from datetime import datetime, timezone
 from itertools import islice
 from os import getenv
 from types import SimpleNamespace
@@ -7,6 +8,8 @@ import asyncio
 from dotenv import dotenv_values
 from yaml import safe_load_all
 import asyncpraw
+
+ALLOWED_TIME_DELTA_IN_SECONDS = 300 # 5 min
 
 def chunk(iterable, size):
     it = iter(iterable)
@@ -26,6 +29,9 @@ async def main():
     me = await reddit.redditor(config.monitored_user)
     async for comment in me.stream.comments(skip_existing=True):
         if "!tags" not in comment.body:
+            continue
+
+        if (datetime.now(timezone.utc).timestamp() - comment.created_utc) >= ALLOWED_TIME_DELTA_IN_SECONDS:
             continue
 
         documents = comment.body.split("!tags\n\n", 1)[1]
