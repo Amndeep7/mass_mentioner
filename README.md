@@ -21,8 +21,8 @@ docker run -d --rm mass_mentioner:v0.2.0
 ```
 
 ```sh
-# using docker-compose
-docker-compose up -d
+# using docker compose
+docker compose up -d --timestamps --build
 ```
 
 ## Usage user side
